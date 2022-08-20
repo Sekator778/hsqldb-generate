@@ -1,6 +1,7 @@
 package org.example;
 
 import com.sun.el.parser.AstPlus;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.store.ProductStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,21 +13,22 @@ import java.util.Properties;
 
 public class Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class.getSimpleName());
-    private static final String PROPERTIES_FILE_NAME = "app.properties";
+    private static final String PROPERTIES_FILE_NAME = "application.properties";
+    private final BasicDataSource pool = new BasicDataSource();
 
     public static final int TARGET_COUNT = 10_000_000;
 
     public static void main(String[] args) {
         var properties = loadProperties();
-        var productStore = new ProductStore(properties);
+//        var productStore = new ProductStore(properties);
 
     }
 
-    private static Properties loadProperties() {
+    public static Properties loadProperties() {
         LOGGER.info("load application");
         System.setProperty("file.encoding", "UTF-8");
         var properties = new Properties();
-        File file = new File("./app.properties");
+        File file = new File("./application.properties");
         if (file.exists()) {
             try (InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
                 properties.load(in);
