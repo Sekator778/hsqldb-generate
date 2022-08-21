@@ -9,14 +9,14 @@ public class Product {
     @Range(min = 1, max = 3, message = "Size of state must be from 1 to 3")
     private int type;
 
-    public Product(int id, String name, String article, int type) {
-        this.id = id;
+    public Product(String name, String article, int type) {
         this.name = name;
         this.article = article;
         this.type = type;
     }
 
-    public Product(String name, String article, int type) {
+    public Product(int id, String name, String article, int type) {
+        this.id = id;
         this.name = name;
         this.article = article;
         this.type = type;

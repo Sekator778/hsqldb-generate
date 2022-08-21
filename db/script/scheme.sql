@@ -2,8 +2,7 @@ create table if not exists type
 (
     type_id INT GENERATED ALWAYS AS IDENTITY,
     name    varchar(30),
-    PRIMARY KEY (type_id),
-    UNIQUE (name)
+    PRIMARY KEY (type_id)
 );
 create table if not exists product
 (

@@ -69,7 +69,7 @@ class ProductStoreTest {
     @Test
     void whenTestSaveTypeThenOneViolation() {
         Product product = new Product("server", "very nice", 8);
-        store.save(product, 2);
+//        store.save(product, 2);
         Set<ConstraintViolation<Product>> constraintViolations =
                 validator.validate(product);
 

@@ -25,7 +25,7 @@ public class RandomProductGenerate implements ProductGenerator {
             String s = RandomStringUtils.randomAlphanumeric(8);
             boolean add = wordSet.add(s);
             if (add) {
-                Product product = new Product(i,  s, s, random.nextInt(3) + 1);
+                Product product = new Product(s, s, random.nextInt(3) + 1);
                 products[i++] = product;
             }
 
