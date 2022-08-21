@@ -6,20 +6,16 @@ public class Product {
     private int id;
     private String name;
     private String article;
-    @Range(min = 1, max = 3, message = "Size of state must be from 1 to 3")
+    @Range(min = 0, max = 2, message = "Size of state must be from 0 to 2")
     private int type;
+    private int shop_id;
 
-    public Product(String name, String article, int type) {
-        this.name = name;
-        this.article = article;
-        this.type = type;
-    }
-
-    public Product(int id, String name, String article, int type) {
+    public Product(int id, String name, String article, int type, int shop_id) {
         this.id = id;
         this.name = name;
         this.article = article;
         this.type = type;
+        this.shop_id = shop_id;
     }
 
     public int getId() {
@@ -54,6 +50,14 @@ public class Product {
         this.article = article;
     }
 
+    public int getShop_id() {
+        return shop_id;
+    }
+
+    public void setShop_id(int shop_id) {
+        this.shop_id = shop_id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,19 +65,12 @@ public class Product {
 
         Product product = (Product) o;
 
-        if (id != product.id) return false;
-        if (type != product.type) return false;
-        if (name != null ? !name.equals(product.name) : product.name != null) return false;
-        return article != null ? article.equals(product.article) : product.article == null;
+        return id == product.id;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (article != null ? article.hashCode() : 0);
-        result = 31 * result + type;
-        return result;
+        return id;
     }
 
     @Override
@@ -83,6 +80,7 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", article='" + article + '\'' +
                 ", type=" + type +
+                ", shop_id=" + shop_id +
                 '}';
     }
 }

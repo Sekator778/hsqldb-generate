@@ -1,27 +1,57 @@
 package org.example;
 
-import com.sun.el.parser.AstPlus;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.example.model.Product;
 import org.example.store.ProductStore;
+import org.example.store.ProductStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
 public class Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class.getSimpleName());
     private static final String PROPERTIES_FILE_NAME = "application.properties";
-    private final BasicDataSource pool = new BasicDataSource();
+    private static final BasicDataSource pool = new BasicDataSource();
+    private static ProductStore store;
 
     public static final int TARGET_COUNT = 10_000_000;
 
-    public static void main(String[] args) {
-        var properties = loadProperties();
-//        var productStore = new ProductStore(properties);
-
+    public static void main(String[] args) throws SQLException {
+        ProductStore store = null;
+        Properties properties = loadProperties();
+        int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
+        int butch_size = Integer.parseInt(properties.getProperty("butch"));
+        Connection con = null;
+        try {
+            //Registering the HSQLDB JDBC driver
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
+            //Creating the connection with HSQLDB
+            con = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
+            if (con != null) {
+                System.out.println("Connection created successfully");
+                store = new ProductStore(properties, con);
+            } else {
+                System.out.println("Problem with creating connection");
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+        ProductStoreService service = new ProductStoreService(number_of_inserts, butch_size);
+        service.saveAllJdbcBatchCallable();
+        assert store != null;
+        List<Product> all = store.findAll();
+        LOGGER.info("========================= {}", all.size());
     }
 
     public static Properties loadProperties() {
