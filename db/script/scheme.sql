@@ -25,7 +25,6 @@ create table if not exists product
     UNIQUE (name)
 );
 
-
 --
 -- create table if not exists product_shop
 -- (

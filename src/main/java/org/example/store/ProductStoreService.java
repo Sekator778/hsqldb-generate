@@ -62,7 +62,7 @@ public class ProductStoreService {
 
     public void saveAllJdbcBatchCallable() {
         System.out.println("insert using jdbc batch, threading");
-        ExecutorService executorService = Executors.newFixedThreadPool(36);
+        ExecutorService executorService = Executors.newFixedThreadPool(hikariDataSource.getMaximumPoolSize());
         List<List<Product>> listOfBookSub = RandomProductGenerate.createSubList(maxSize, batchSize);
         List<Callable<Void>> callables = listOfBookSub.stream().map(sublist ->
                 (Callable<Void>) () -> {

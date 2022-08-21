@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Range;
 public class Product {
     private int id;
     private String name;
+    //50
     private String article;
     @Range(min = 0, max = 2, message = "Size of state must be from 0 to 2")
     private int type;

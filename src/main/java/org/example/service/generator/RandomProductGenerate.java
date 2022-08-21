@@ -37,7 +37,6 @@ public class RandomProductGenerate implements ProductGenerator {
     private boolean validateModel(Product product) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
-
         return validator.validate(product).isEmpty();
     }
 

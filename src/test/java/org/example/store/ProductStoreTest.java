@@ -98,9 +98,9 @@ class ProductStoreTest {
     @Order(6)
     @Test
     void saveManyProductWithButch() {
-        store.saveAllWithBatch(1_000_000);
+        store.saveAllWithBatch(10_000_000);
         List<Product> all = store.findAll();
-        assertEquals(1_000_000, all.size());
+        assertEquals(10_000_000, all.size());
     }
 
 }

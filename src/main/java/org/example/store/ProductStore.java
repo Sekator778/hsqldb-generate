@@ -179,25 +179,12 @@ public class ProductStore implements AutoCloseable {
         return products;
     }
 
-//    public String findShop(String type) {
-//        LOGGER.info("Find Shop");
-//        var sql = "SELECT * FROM product";
-//        var products = new ArrayList<Product>();
-//        try (var statement = connection.prepareStatement(sql)) {
-//            var selection = statement.executeQuery();
-//            while (selection.next()) {
-//                products.add(new Product(
-//                        selection.getInt("product_id"),
-//                        selection.getString("name"),
-//                        selection.getString("article"),
-//                        selection.getInt("type_id"),
-//                        selection.getInt("shop_id")
-//                ));
-//            }
-//        } catch (Exception e) {
-//            LOGGER.error("Operation fail: { }", e.getCause());
-//            throw new IllegalStateException();
-//        }
-//        return products;
-//    }
+    /**
+     * find address where max count defined type
+     * @param type - product for looking
+     * @return address shop
+     */
+    public String findShop(String type) {
+        return "need more info";
+    }
 }
