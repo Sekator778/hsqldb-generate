@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class ProductStore implements AutoCloseable {
+public class ProductStore implements AutoCloseable, Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductStore.class);
     private final String PACK = "db/script";
 
@@ -186,5 +186,9 @@ public class ProductStore implements AutoCloseable {
      */
     public String findShop(String type) {
         return "need more info";
+    }
+
+    @Override
+    public void run() {
     }
 }

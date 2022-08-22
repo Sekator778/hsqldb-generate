@@ -5,6 +5,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.example.model.Product;
+import org.example.store.StoreWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class RandomProductGenerate implements ProductGenerator {
             boolean add = wordSet.add(s);
             if (add) {
                 Product product = new Product(i, s, s, random.nextInt(3), random.nextInt(3));
-                    products[i++] = product;
+                products[i++] = product;
             }
         }
         return products;
@@ -77,13 +78,38 @@ public class RandomProductGenerate implements ProductGenerator {
      * output list to console
      * with its length
      */
-    private static void viewList(List<List<Product>> data){
+    private static void viewList(List<List<Product>> data) {
         System.out.println("length " + data.size());
-        for (List<Product> list : data             ) {
+        for (List<Product> list : data) {
             System.out.println("==============");
             System.out.println("inner list size " + list.size());
             System.out.println(list);
             System.out.println("==============");
         }
+    }
+
+    public Product[] generateForThread(int count, int batchSize, Properties properties) {
+        LOGGER.info("start generate random data with count {}", count);
+        Product[] products = new Product[batchSize];
+        Random random = new Random();
+        int i = 0;
+        int index_product = 0;
+        Set<String> wordSet = new HashSet<>(count);
+        while (wordSet.size() < count) {
+            String s = RandomStringUtils.randomAlphanumeric(8);
+            boolean add = wordSet.add(s);
+            if (add) {
+                Product product = new Product(index_product++, s, s, random.nextInt(3), random.nextInt(3));
+                products[i++] = product;
+                if (i == batchSize) {
+                    LOGGER.info("arr for batch done make insert");
+                    new StoreWorker(products).exex(properties);
+                    products = new Product[batchSize];
+                    i = 0;
+                }
+            }
+        }
+        LOGGER.info("generated random data finished");
+        return products;
     }
 }

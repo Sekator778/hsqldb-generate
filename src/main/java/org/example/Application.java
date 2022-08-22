@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class Application {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class.getSimpleName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
     private static final String PROPERTIES_FILE_NAME = "application.properties";
     private static final BasicDataSource pool = new BasicDataSource();
     private static ProductStore store;
@@ -31,7 +31,7 @@ public class Application {
         ProductStore store = null;
         Properties properties = loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
-        int butch_size = Integer.parseInt(properties.getProperty("butch"));
+        int butch_size = Integer.parseInt(properties.getProperty("batch"));
         Connection con = null;
         try {
             //Registering the HSQLDB JDBC driver
