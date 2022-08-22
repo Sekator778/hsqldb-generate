@@ -17,6 +17,7 @@ public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws SQLException {
+        long timeStart = System.currentTimeMillis();
         ProductStore store = null;
         Properties properties = Application.loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
@@ -37,10 +38,13 @@ public class App {
         LOGGER.info("RandomProductGenerate created");
         generate.generateForThread(number_of_inserts, batch_size, properties);
         LOGGER.info("RandomProductGenerate.generateForThread finished");
-
+        assert store != null;
         List<Product> all = store.findAll();
 //        all.parallelStream().forEach(System.out::println);
         connection.close();
         LOGGER.info("========================= {}", all.size());
+        long timeFinish = System.currentTimeMillis();
+        long timerWorks = (timeFinish - timeStart);
+        LOGGER.info("Time: ----------------> {}", timerWorks);
     }
 }

@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -27,7 +28,8 @@ public class Application {
 
     public static final int TARGET_COUNT = 10_000_000;
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
+        long timeStart = System.currentTimeMillis();
         ProductStore store = null;
         Properties properties = loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
@@ -52,6 +54,9 @@ public class Application {
         assert store != null;
         List<Product> all = store.findAll();
         LOGGER.info("========================= {}", all.size());
+        long timeFinish = System.currentTimeMillis();
+        long   timerWorks = (timeFinish - timeStart);
+        LOGGER.info("Time: ----------------> {}", timerWorks);
     }
 
     public static Properties loadProperties() {

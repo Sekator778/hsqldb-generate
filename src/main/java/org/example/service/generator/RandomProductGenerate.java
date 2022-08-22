@@ -6,6 +6,7 @@ import jakarta.validation.ValidatorFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.example.model.Product;
 import org.example.store.StoreWorker;
+import org.example.util.HibernateValidateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +95,7 @@ public class RandomProductGenerate implements ProductGenerator {
         Random random = new Random();
         int i = 0;
         int index_product = 0;
+        int differenceSize = 0;
         Set<String> wordSet = new HashSet<>(count);
         while (wordSet.size() < count) {
             String s = RandomStringUtils.randomAlphanumeric(8);
@@ -102,6 +104,15 @@ public class RandomProductGenerate implements ProductGenerator {
                 Product product = new Product(index_product++, s, s, random.nextInt(3), random.nextInt(3));
                 products[i++] = product;
                 if (i == batchSize) {
+                    LOGGER.info("start validate Copy On Write Use");
+                    List<Product> productList = Arrays.asList(products);
+                    HibernateValidateService validateService = new HibernateValidateService(productList);
+                    List<Product> validate = validateService.validate();
+                    LOGGER.info("size after validate {}", validate.size());
+                    differenceSize = batchSize - validate.size();
+                    if (differenceSize > 0) {
+                        LOGGER.error("do something immediately !!!!! ");
+                    }
                     LOGGER.info("arr for batch done make insert");
                     new StoreWorker(products).exex(properties);
                     products = new Product[batchSize];
