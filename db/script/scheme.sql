@@ -11,7 +11,6 @@ create table if not exists stores
     PRIMARY KEY (id),
     UNIQUE (address)
 );
-
 create table if not exists products
 (
     product_id INT,
@@ -24,11 +23,10 @@ create table if not exists products
     FOREIGN KEY (shop_id) REFERENCES stores (id),
     UNIQUE (name)
 );
-
 create table if not exists stores_products
 (
-    store_id   integer not null,
-    product_id integer not null,
+    store_id   INT,
+    product_id INT,
     foreign key (store_id) references stores (id),
     foreign key (product_id) references products (product_id)
 );

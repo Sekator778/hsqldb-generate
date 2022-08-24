@@ -36,12 +36,28 @@ public class ProductStore implements AutoCloseable, Runnable {
         try (var statement = connection.createStatement()) {
             var sql = Files.readString(Path.of(PACK, "insert.sql"));
             statement.execute(sql);
-            LOGGER.info("--- insert into table type ---");
+            LOGGER.info("--- insert into table type and stores ---");
+//            sql = Files.readString(Path.of(PACK, "insert-stores_products.sql"));
+//            statement.execute(sql);
+//            LOGGER.info("--- insert into table stores_products ---");
         } catch (Exception e) {
             LOGGER.error("Operation fail: {}", e.getMessage());
             throw new IllegalStateException();
         }
     }
+
+public boolean distributionProducts(){
+        LOGGER.info("distribution started");
+    try (var statement = connection.createStatement()) {
+        var sql = Files.readString(Path.of(PACK, "insert-stores_products.sql"));
+        statement.execute(sql);
+        LOGGER.info("--- insert into table stores_products ---");
+    }catch (Exception e) {
+        LOGGER.error("Operation fail: {}", e.getMessage());
+        throw new IllegalStateException();
+    }
+    return true;
+}
 
     private void initScheme() {
         LOGGER.info("--- Create tables ---");
@@ -190,14 +206,14 @@ public class ProductStore implements AutoCloseable, Runnable {
     public String findAddressWhereMoreTypePresent() {
         LOGGER.info("Find store");
 //        var QUERY = properties.getProperty("db/test_db/select.sql");
-        String param = "other";
+        String param = "Drink";
         String QUERY = String.format("SELECT S.address, count(*) as count\n" +
-                "FROM stores S join stores_products SA on S.id = SA.store_id\n" +
-                "    join products P on SA.product_id = P.id\n" +
-                "    join type T on P.type_id = T.id\n" +
+                "FROM stores S join stores_products SP on S.id = SP.store_id\n" +
+                "    join products P on SP.product_id = P.product_id\n" +
+                "    join type T on P.type_id = T.type_id\n" +
                 "where T.name = '%S' group by S.id\n" +
                 "LIMIT 1;", param);
-        System.out.println(QUERY);
+//        System.out.println(QUERY);
         var products = new ArrayList<Product>();
         // Open a connection
         try (Connection conn = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
@@ -209,7 +225,7 @@ public class ProductStore implements AutoCloseable, Runnable {
                 System.out.println("Address: " + rs.getString("address"));
             }
         } catch (Exception e) {
-            LOGGER.error("Operation fail: { }", e.getCause());
+            LOGGER.error("Operation findAddressWhereMoreTypePresent fail: { }", e.getCause());
             throw new IllegalStateException();
         }
         return "ffffffffffffffffffffff";
