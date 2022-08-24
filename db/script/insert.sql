@@ -5,9 +5,9 @@ VALUES ('Food');
 INSERT INTO type (name)
 VALUES ('Electronic');
 
-INSERT INTO shops (address)
+INSERT INTO stores (address)
 VALUES ('Kyiv');
-INSERT INTO shops (address)
+INSERT INTO stores (address)
 VALUES ('Kharkiv');
-INSERT INTO shops (address)
+INSERT INTO stores (address)
 VALUES ('Dnipro');

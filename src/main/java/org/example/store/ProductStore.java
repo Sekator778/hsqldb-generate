@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,13 +161,13 @@ public class ProductStore implements AutoCloseable, Runnable {
      */
     public List<Product> findAll() {
         LOGGER.info("Load All Products");
-        var sql = "SELECT * FROM product";
+        var sql = "SELECT * FROM products";
         var products = new ArrayList<Product>();
         try (var statement = connection.prepareStatement(sql)) {
             var selection = statement.executeQuery();
             while (selection.next()) {
                 products.add(new Product(
-                        selection.getInt("product_id"),
+                        selection.getInt("id"),
                         selection.getString("name"),
                         selection.getString("article"),
                         selection.getInt("type_id"),
@@ -180,12 +182,37 @@ public class ProductStore implements AutoCloseable, Runnable {
     }
 
     /**
-     * find address where max count defined type
-     * @param type - product for looking
-     * @return address shop
+     * select address store
+     * where the specified type of product is the most
+     *
+     * @return - address
      */
-    public String findShop(String type) {
-        return "need more info";
+    public String findAddressWhereMoreTypePresent() {
+        LOGGER.info("Find store");
+//        var QUERY = properties.getProperty("db/test_db/select.sql");
+        String param = "other";
+        String QUERY = String.format("SELECT S.address, count(*) as count\n" +
+                "FROM stores S join stores_products SA on S.id = SA.store_id\n" +
+                "    join products P on SA.product_id = P.id\n" +
+                "    join type T on P.type_id = T.id\n" +
+                "where T.name = '%S' group by S.id\n" +
+                "LIMIT 1;", param);
+        System.out.println(QUERY);
+        var products = new ArrayList<Product>();
+        // Open a connection
+        try (Connection conn = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(QUERY);
+        ) {
+            while (rs.next()) {
+                //Display values
+                System.out.println("Address: " + rs.getString("address"));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Operation fail: { }", e.getCause());
+            throw new IllegalStateException();
+        }
+        return "ffffffffffffffffffffff";
     }
 
     @Override
