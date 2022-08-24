@@ -27,7 +27,6 @@ public class App {
             connection = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
             if (connection != null) {
                 LOGGER.info("Connection created successfully");
-                LOGGER.info("url--> {}", properties.getProperty("url"));
                 store = new ProductStore(properties, connection);
             } else {
                 LOGGER.info("Problem with creating connection");
@@ -42,12 +41,10 @@ public class App {
         assert store != null;
         List<Product> all = store.findAll();
 //        all.parallelStream().forEach(System.out::println);
-        // close early when method findAddress create mew connection
         connection.close();
         LOGGER.info("========================= {}", all.size());
         long timeFinish = System.currentTimeMillis();
         long timerWorks = (timeFinish - timeStart);
         LOGGER.info("Time: ----------------> {}", timerWorks);
-        store.findAddressWhereMoreTypePresent();
     }
 }
