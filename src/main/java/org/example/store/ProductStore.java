@@ -167,7 +167,7 @@ public class ProductStore implements AutoCloseable, Runnable {
             var selection = statement.executeQuery();
             while (selection.next()) {
                 products.add(new Product(
-                        selection.getInt("id"),
+                        selection.getInt("product_id"),
                         selection.getString("name"),
                         selection.getString("article"),
                         selection.getInt("type_id"),
