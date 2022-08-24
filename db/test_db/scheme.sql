@@ -1,14 +1,14 @@
 create table if not exists type
 (
     id   serial primary key,
-    name varchar(30) not null
+    name varchar not null
 );
 
 create table if not exists products
 (
     id         serial primary key,
-    name       varchar(30) not null,
-    article    varchar(50),
+    name       varchar not null,
+    article    varchar,
     expiration date    not null,
     type_id  integer,
     foreign key (type_id) references type (id)
@@ -18,7 +18,7 @@ create table if not exists stores
 (
     id      serial primary key,
     name    varchar not null,
-    address varchar(50)
+    address varchar
 );
 
 create table if not exists stores_products
