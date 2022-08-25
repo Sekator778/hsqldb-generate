@@ -94,7 +94,7 @@ public class RandomProductGenerate implements ProductGenerator {
         Product[] products = new Product[batchSize];
         Random random = new Random();
         int i = 0;
-        int index_product = 0;
+        int index_product = 1;
         int differenceSize = 0;
         Set<String> wordSet = new HashSet<>(count);
         while (wordSet.size() < count) {

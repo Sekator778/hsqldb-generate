@@ -19,7 +19,6 @@ public class StoreWorker {
     }
 
     public void exex(Properties properties) {
-        LOGGER.info("run start");
         LOGGER.info("Operation Batch started");
         var sql = "INSERT INTO products(product_id, name, article, type_id, shop_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(properties.getProperty("url"),
