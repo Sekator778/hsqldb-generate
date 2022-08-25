@@ -37,9 +37,6 @@ public class ProductStore implements AutoCloseable, Runnable {
             var sql = Files.readString(Path.of(PACK, "insert.sql"));
             statement.execute(sql);
             LOGGER.info("--- insert into table type and stores ---");
-//            sql = Files.readString(Path.of(PACK, "insert-stores_products.sql"));
-//            statement.execute(sql);
-//            LOGGER.info("--- insert into table stores_products ---");
         } catch (Exception e) {
             LOGGER.error("Operation fail: {}", e.getMessage());
             throw new IllegalStateException();
@@ -187,7 +184,9 @@ public class ProductStore implements AutoCloseable, Runnable {
     /**
      * select address store
      * where the specified type of product is the most
-     *
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * PrepareStatement
+     * !!!!!!!!!!!!!!
      * @return - address
      */
     public String findAddressWhereMoreTypePresent(Connection connection) {
@@ -207,14 +206,13 @@ public class ProductStore implements AutoCloseable, Runnable {
                 "              join type T on P.type_id = T.type_id\n" +
                 "where T.name = 'Food' group by S.id\n" +
                 "LIMIT 1;";
-//        System.out.println(QUERY);
         // Open a connection
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(QUERY);
         ) {
             while (rs.next()) {
                 //Display values
-              result = rs.getString("address");
+                result = rs.getString("address");
             }
         } catch (Exception e) {
             LOGGER.error("Operation fail: { }", e.getCause());
