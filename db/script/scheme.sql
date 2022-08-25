@@ -6,7 +6,7 @@ create table if not exists type
 );
 create table if not exists stores
 (
-    id INT GENERATED ALWAYS AS IDENTITY,
+    id      INT GENERATED ALWAYS AS IDENTITY,
     address varchar(50),
     PRIMARY KEY (id),
     UNIQUE (address)
@@ -23,11 +23,10 @@ create table if not exists products
     FOREIGN KEY (shop_id) REFERENCES stores (id),
     UNIQUE (name)
 );
--- create table if not exists stores_products
--- (
---     store_id   INT,
---     product_id INT,
---     test int,
---     foreign key (store_id) references stores (id),
---     foreign key (product_id) references products (product_id)
--- );
+create table if not exists stores_products
+(
+    store_id   INT,
+    product_id INT,
+    foreign key (store_id) references stores (id),
+    foreign key (product_id) references products (product_id)
+);

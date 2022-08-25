@@ -190,35 +190,51 @@ public class ProductStore implements AutoCloseable, Runnable {
      *
      * @return - address
      */
-    public String findAddressWhereMoreTypePresent() {
+    public String findAddressWhereMoreTypePresent(Connection connection) {
+        String result = "";
         LOGGER.info("Find store");
 //        var QUERY = properties.getProperty("db/test_db/select.sql");
-        String param = "other";
+        String param = "Food";
         String QUERY = String.format("SELECT S.address, count(*) as count\n" +
                 "FROM stores S join stores_products SP on S.id = SP.store_id\n" +
-                "    join products P on SP.product_id = P.id\n" +
-                "    join type T on P.type_id = T.id\n" +
+                "    join products P on SP.product_id = P.product_id\n" +
+                "    join type T on P.type_id = T.type_id\n" +
                 "where T.name = '%S' group by S.id\n" +
                 "LIMIT 1;", param);
-        System.out.println(QUERY);
-        var products = new ArrayList<Product>();
+        QUERY = "SELECT S.address, count(*) as count\n" +
+                "FROM stores S join stores_products SP on S.id = SP.store_id\n" +
+                "              join products P on SP.product_id = P.product_id\n" +
+                "              join type T on P.type_id = T.type_id\n" +
+                "where T.name = 'Food' group by S.id\n" +
+                "LIMIT 1;";
+//        System.out.println(QUERY);
         // Open a connection
-        try (Connection conn = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(QUERY);
         ) {
             while (rs.next()) {
                 //Display values
-                System.out.println("Address: " + rs.getString("address"));
+              result = rs.getString("address");
             }
         } catch (Exception e) {
             LOGGER.error("Operation fail: { }", e.getCause());
             throw new IllegalStateException();
         }
-        return "ffffffffffffffffffffff";
+        return result;
     }
 
     @Override
     public void run() {
+    }
+
+    public void distributionProducts(Connection connection) {
+        try (var statement = connection.createStatement()) {
+            var sql = Files.readString(Path.of(PACK, "insert-stores_products.sql"));
+            statement.execute(sql);
+            LOGGER.info("--- insert into table stores_products ---");
+        } catch (Exception e) {
+            LOGGER.error("Operation distributionProducts fail: {}", e.getMessage());
+            throw new IllegalStateException();
+        }
     }
 }
