@@ -41,7 +41,7 @@ public class ProductStore implements AutoCloseable, Runnable {
 //            statement.execute(sql);
 //            LOGGER.info("--- insert into table stores_products ---");
         } catch (Exception e) {
-            LOGGER.error("Operation fail: {}", e.getMessage());
+            LOGGER.error("Operation fillTypeAndShop fail: {}", e.getMessage());
             throw new IllegalStateException();
         }
     }

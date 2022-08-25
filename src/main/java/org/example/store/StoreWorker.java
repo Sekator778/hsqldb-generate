@@ -22,7 +22,9 @@ public class StoreWorker {
         LOGGER.info("run start");
         LOGGER.info("Operation Batch started");
         var sql = "INSERT INTO products(product_id, name, article, type_id, shop_id) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
+        try (Connection connection = DriverManager.getConnection(properties.getProperty("url"),
+                properties.getProperty("username"),
+                properties.getProperty("password"));
              var statement = connection.prepareStatement(sql)) {
             for (Product product : products) {
                 statement.setInt(1, product.getId());

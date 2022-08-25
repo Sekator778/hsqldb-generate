@@ -24,7 +24,9 @@ public class App {
         int batch_size = Integer.parseInt(properties.getProperty("batch"));
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(properties.getProperty("url"), "sa", "");
+            connection = DriverManager.getConnection(properties.getProperty("url"),
+                    properties.getProperty("username"),
+                    properties.getProperty("password"));
             if (connection != null) {
                 LOGGER.info("Connection created successfully");
                 store = new ProductStore(properties, connection);
@@ -39,14 +41,14 @@ public class App {
         generate.generateForThread(number_of_inserts, batch_size, properties);
         LOGGER.info("RandomProductGenerate.generateForThread finished");
         assert store != null;
-        store.distributionProducts();
+//        store.distributionProducts();
         assert store != null;
         List<Product> all = store.findAll();
 //        all.parallelStream().forEach(System.out::println);
         connection.close();
         LOGGER.info("========================= {}", all.size());
-        String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent();
-        LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
+//        String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent();
+//        LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
         long timeFinish = System.currentTimeMillis();
         long timerWorks = (timeFinish - timeStart);
         LOGGER.info("Time: ----------------> {}", timerWorks);

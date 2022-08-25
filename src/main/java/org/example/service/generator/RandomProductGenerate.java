@@ -101,7 +101,11 @@ public class RandomProductGenerate implements ProductGenerator {
             String s = RandomStringUtils.randomAlphanumeric(8);
             boolean add = wordSet.add(s);
             if (add) {
-                Product product = new Product(index_product++, s, s, random.nextInt(3), random.nextInt(3));
+                Product product = new Product(index_product++,
+                        s,
+                        s,
+                        (random.nextInt(3)+1),
+                        (random.nextInt(3)+1));
                 products[i++] = product;
                 if (i == batchSize) {
                     LOGGER.info("start validate Copy On Write Use");
