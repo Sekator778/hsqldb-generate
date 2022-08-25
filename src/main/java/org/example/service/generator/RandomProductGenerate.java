@@ -98,12 +98,13 @@ public class RandomProductGenerate implements ProductGenerator {
         int differenceSize = 0;
         Set<String> wordSet = new HashSet<>(count);
         while (wordSet.size() < count) {
-            String s = RandomStringUtils.randomAlphanumeric(8);
-            boolean add = wordSet.add(s);
+            String name = RandomStringUtils.randomAlphanumeric(8);
+            String article = RandomStringUtils.randomAlphanumeric(50);
+            boolean add = wordSet.add(name);
             if (add) {
                 Product product = new Product(index_product++,
-                        s,
-                        s,
+                        name,
+                        article,
                         (random.nextInt(3)+1),
                         (random.nextInt(3)+1));
                 products[i++] = product;

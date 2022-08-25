@@ -20,7 +20,7 @@ public class HibernateValidateService {
         list.parallelStream().forEach(product -> {
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             Validator validator = factory.getValidator();
-            if (validator.validate(product).isEmpty()) {
+            if (!validator.validate(product).isEmpty()) {
                 list.remove(product);
             }
         });

@@ -1,6 +1,5 @@
 package org.example.store;
 
-import org.example.Application;
 import org.example.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

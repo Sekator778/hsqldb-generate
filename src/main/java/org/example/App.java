@@ -3,7 +3,6 @@ package org.example;
 import org.example.model.Product;
 import org.example.service.generator.RandomProductGenerate;
 import org.example.store.ProductStore;
-import org.example.store.ProductStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class App {
     public static void main(String[] args) throws SQLException {
         long timeStart = System.currentTimeMillis();
         ProductStore store = null;
-        Properties properties = Application.loadProperties();
+        Properties properties = ReaderProperty.loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
         int batch_size = Integer.parseInt(properties.getProperty("batch"));
         Connection connection = null;

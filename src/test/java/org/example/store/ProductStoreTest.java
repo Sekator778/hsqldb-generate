@@ -2,7 +2,7 @@ package org.example.store;
 
 import jakarta.validation.Validator;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.example.Application;
+import org.example.ReaderProperty;
 import org.example.model.Product;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ class ProductStoreTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        Properties properties = Application.loadProperties();
+        Properties properties = ReaderProperty.loadProperties();
         LOGGER.info("before each setUp running");
         pool.setDriverClassName(properties.getProperty("driver"));
         pool.setUrl(properties.getProperty("url"));

@@ -1,6 +1,5 @@
 package org.example;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.model.Product;
 import org.example.store.ProductStore;
 import org.example.store.ProductStoreService;
@@ -14,19 +13,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Time;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
-public class Application {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+public class ReaderProperty {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReaderProperty.class);
     private static final String PROPERTIES_FILE_NAME = "application.properties";
-    private static final BasicDataSource pool = new BasicDataSource();
-    private static ProductStore store;
-
-    public static final int TARGET_COUNT = 10_000_000;
+//    private static final String PROPERTIES_FILE_NAME = "application-hsqldb.properties";
 
     public static void main(String[] args) {
         long timeStart = System.currentTimeMillis();
@@ -63,7 +57,7 @@ public class Application {
         LOGGER.info("load application");
         System.setProperty("file.encoding", "UTF-8");
         var properties = new Properties();
-        File file = new File("./application.properties");
+        File file = new File(PROPERTIES_FILE_NAME);
         if (file.exists()) {
             try (InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
                 properties.load(in);
@@ -75,7 +69,7 @@ public class Application {
             try {
                 properties.load(new InputStreamReader(
                         Objects.requireNonNull(
-                                Application.class.getClassLoader()
+                                ReaderProperty.class.getClassLoader()
                                         .getResourceAsStream(PROPERTIES_FILE_NAME)),
                         StandardCharsets.UTF_8));
                 LOGGER.info("default properties loading");

@@ -17,7 +17,7 @@ public class Test {
         Product model = new Product(1, "laptop", "very nice", 1, 1);
 
         BasicDataSource pool = new BasicDataSource();
-        Properties properties = Application.loadProperties();
+        Properties properties = ReaderProperty.loadProperties();
         LOGGER.info("before each setUp running");
         pool.setDriverClassName(properties.getProperty("driver"));
         pool.setUrl(properties.getProperty("url"));

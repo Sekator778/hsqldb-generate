@@ -7,7 +7,7 @@ public class Product {
     private String name;
     //50
     private String article;
-    @Range(min = 0, max = 2, message = "Size of state must be from 0 to 2")
+    @Range(min = 1, max = 3, message = "Size of state must be from 1 to 3")
     private int type;
     private int shop_id;
 
