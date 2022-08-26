@@ -8,41 +8,30 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
-public class ProductStore implements AutoCloseable, Runnable {
+/**
+ * its created tables and fill it
+ */
+public class ProductStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductStore.class);
     private final String PACK = "db/script";
-
-    private final Properties properties;
-
+    /**
+     * connection one for more jobs
+     */
     private static Connection connection;
 
-    public ProductStore(Properties properties, Connection connection) {
-        this.properties = properties;
-        this.connection = connection;
+    public ProductStore(Connection connection) {
+        ProductStore.connection = connection;
         initScheme();
         fillTypeAndShop();
     }
 
-    private void fillTypeAndShop() {
-        LOGGER.info("--- fill table type ---");
-        try (var statement = connection.createStatement()) {
-            var sql = Files.readString(Path.of(PACK, "insert.sql"));
-            statement.execute(sql);
-            LOGGER.info("--- insert into table type and stores ---");
-        } catch (Exception e) {
-            LOGGER.error("Operation fail: {}", e.getMessage());
-            throw new IllegalStateException();
-        }
-    }
-
+    /**
+     * drop and crate tables
+     */
     private void initScheme() {
         LOGGER.info("--- Create tables ---");
         try (var statement = connection.createStatement()) {
@@ -58,100 +47,19 @@ public class ProductStore implements AutoCloseable, Runnable {
         }
     }
 
-    @Override
-    public void close() throws Exception {
-        if (connection != null) {
-            connection.close();
-        }
-    }
-
     /**
-     * insert one element
+     * insert into tables type and shop
      */
-    public static Product save(Product model) {
-        LOGGER.info("save product");
-        var sql = "INSERT INTO product(product_id, name, article, type_id, shop_id) VALUES (?, ?, ?, ?, ?)";
-        try (var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, model.getId());
-            statement.setString(2, model.getName());
-            statement.setString(3, model.getArticle());
-            statement.setInt(4, model.getType());
-            statement.setInt(5, model.getShop_id());
-            statement.executeUpdate();
-        } catch (Exception e) {
-            LOGGER.error("Operation Fail: { }", e.getCause());
-            throw new IllegalStateException();
-        }
-        return model;
-    }
-
-    /**
-     * insert use batch method
-     *
-     * @param count - max element for insert
-     */
-    public boolean saveAllWithBatch(int count) {
-        RandomProductGenerate productGenerate = new RandomProductGenerate();
-        Product[] generate = productGenerate.generate(count);
-        int sizeBatch = 100_000;
-        LOGGER.info("Operation Batch = {} started", sizeBatch);
-        var sql = "INSERT INTO product(product_id, name, article, type_id, shop_id) VALUES (?, ?, ?, ?, ?)";
-        try (var statement = connection.prepareStatement(sql)) {
-            for (int i = 0; i < count; i++) {
-                statement.setInt(1, generate[i].getId());
-                statement.setString(2, generate[i].getName());
-                statement.setString(3, generate[i].getArticle());
-                statement.setInt(4, generate[i].getType());
-                statement.setInt(5, generate[i].getShop_id());
-                statement.addBatch();
-                if ((i % sizeBatch) == 0) {
-                    statement.executeBatch();
-                    statement.clearBatch();
-                    LOGGER.info("batch use id {}", i);
-                }
-            }
-            statement.executeBatch();
-            statement.clearBatch();
-        } catch (Exception e) {
-            LOGGER.error("Operation Batch Fail: {}", e.getMessage());
-            throw new IllegalStateException();
-        }
-        return true;
-    }
-
-    /**
-     * insert one to one use prepareStatement
-     */
-    public boolean saveAll() {
-        RandomProductGenerate productGenerate = new RandomProductGenerate();
-        Product[] generate = productGenerate.generate(100);
-        Arrays.stream(generate).forEach(ProductStore::save);
-        return true;
-    }
-
-    /**
-     * insert use no safety statement
-     */
-    public boolean saveAllWithBatchUseStatement(int count) {
-        LOGGER.info("Operation Batch started with statement ");
-        RandomProductGenerate productGenerate = new RandomProductGenerate();
-        Product[] generate = productGenerate.generate(count);
-        int sizeBatch = 100_000;
+    private void fillTypeAndShop() {
+        LOGGER.info("--- fill table type ---");
         try (var statement = connection.createStatement()) {
-            for (int i = 0; i < count; i++) {
-                var sql = "insert into product (product_id, name, article, type_id, shop_id) " +
-                        "values ('" + generate[i].getId() + "','" + generate[i].getName() + "','" + generate[i].getArticle() + "','" + generate[i].getType() + "','" + generate[i].getShop_id() + "')";
-                statement.addBatch(sql);
-                if ((i % sizeBatch) == 0) {
-                    statement.executeBatch();
-                }
-            }
-            statement.executeBatch();
+            var sql = Files.readString(Path.of(PACK, "insert.sql"));
+            statement.execute(sql);
+            LOGGER.info("--- insert into table type and stores ---");
         } catch (Exception e) {
-            LOGGER.error("Operation Batch Fail: { }", e.getCause());
+            LOGGER.error("Operation fail: {}", e.getMessage());
             throw new IllegalStateException();
         }
-        return true;
     }
 
     /**
@@ -184,45 +92,32 @@ public class ProductStore implements AutoCloseable, Runnable {
     /**
      * select address store
      * where the specified type of product is the most
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * PrepareStatement
-     * !!!!!!!!!!!!!!
+     *
      * @return - address
      */
-    public String findAddressWhereMoreTypePresent(Connection connection) {
+    public String findAddressWhereMoreTypePresent(String type) {
         String result = "";
         LOGGER.info("Find store");
-//        var QUERY = properties.getProperty("db/test_db/select.sql");
-        String param = "Food";
-        String QUERY = String.format("SELECT S.address, count(*) as count\n" +
-                "FROM stores S join stores_products SP on S.id = SP.store_id\n" +
-                "    join products P on SP.product_id = P.product_id\n" +
-                "    join type T on P.type_id = T.type_id\n" +
-                "where T.name = '%S' group by S.id\n" +
-                "LIMIT 1;", param);
-        QUERY = "SELECT S.address, count(*) as count\n" +
+        var QUERY = "SELECT S.address, count(*) as count\n" +
                 "FROM stores S join stores_products SP on S.id = SP.store_id\n" +
                 "              join products P on SP.product_id = P.product_id\n" +
                 "              join type T on P.type_id = T.type_id\n" +
-                "where T.name = 'Food' group by S.id\n" +
+                "where T.name = " +
+                "'" +
+                type + "'" +
+                "group by S.id\n" +
                 "LIMIT 1;";
-        // Open a connection
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(QUERY);
-        ) {
-            while (rs.next()) {
-                //Display values
-                result = rs.getString("address");
+        try (var statement = connection.prepareStatement(QUERY)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                result = resultSet.getString("address");
             }
+            LOGGER.info("Store found successfully !!!");
         } catch (Exception e) {
             LOGGER.error("Operation fail: { }", e.getCause());
             throw new IllegalStateException();
         }
         return result;
-    }
-
-    @Override
-    public void run() {
     }
 
     public void distributionProducts(Connection connection) {

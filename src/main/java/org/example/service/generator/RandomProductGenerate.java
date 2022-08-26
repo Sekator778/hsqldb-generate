@@ -89,17 +89,19 @@ public class RandomProductGenerate implements ProductGenerator {
         }
     }
 
-    public Product[] generateForThread(int count, int batchSize, Properties properties) {
+    public boolean generateForThread(int count, int batchSize, Properties properties) {
         LOGGER.info("start generate random data with count {}", count);
         Product[] products = new Product[batchSize];
         Random random = new Random();
+        int countCharsForNameProduct = Integer.parseInt(properties.getProperty("countCharsForNameProduct"));
+        int countCharsForNameArticle = Integer.parseInt(properties.getProperty("countCharsForNameArticle"));
         int i = 0;
         int index_product = 1;
-        int differenceSize = 0;
+        int differenceSize;
         Set<String> wordSet = new HashSet<>(count);
         while (wordSet.size() < count) {
-            String name = RandomStringUtils.randomAlphanumeric(8);
-            String article = RandomStringUtils.randomAlphanumeric(50);
+            String name = RandomStringUtils.randomAlphanumeric(countCharsForNameProduct);
+            String article = RandomStringUtils.randomAlphanumeric(countCharsForNameArticle);
             boolean add = wordSet.add(name);
             if (add) {
                 Product product = new Product(index_product++,
@@ -126,6 +128,6 @@ public class RandomProductGenerate implements ProductGenerator {
             }
         }
         LOGGER.info("generated random data finished");
-        return products;
+        return products.length != 0;
     }
 }

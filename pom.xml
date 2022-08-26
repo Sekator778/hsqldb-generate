@@ -152,7 +152,7 @@
                                 <transformers>
                                     <transformer
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                        <mainClass>org.example.ReaderProperty</mainClass>
+                                        <mainClass>org.example.util.ReaderProperty</mainClass>
                                     </transformer>
                                 </transformers>
                             </configuration>

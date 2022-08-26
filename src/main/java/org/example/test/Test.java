@@ -1,7 +1,8 @@
-package org.example;
+package org.example.test;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.model.Product;
+import org.example.util.ReaderProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -8,6 +8,11 @@ import org.example.model.Product;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * правила валідації:
+ * 1) всі назви від 3х до 50 символів
+ * 2) у назві продукту має бути мінімум 3 голосні
+ */
 public class HibernateValidateService {
     private final CopyOnWriteArrayList<Product> list;
 
@@ -18,31 +23,14 @@ public class HibernateValidateService {
 
     public List<Product> validate () {
         list.parallelStream().forEach(product -> {
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
+            Validator validator;
+            try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+                validator = factory.getValidator();
+            }
             if (!validator.validate(product).isEmpty()) {
                 list.remove(product);
             }
         });
         return list;
-    }
-    public List<Product> validate2() {
-        list.parallelStream().forEach(product -> {
-
-            int x = product.getType();
-            if (x > 2 || x < 0) {
-                list.remove(product);
-            }
-        });
-        return list;
-    }
-
-    /**
-     * use hibernate validator
-     */
-    private boolean validateModel(Product product) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        return validator.validate(product).isEmpty();
     }
 }
