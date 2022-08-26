@@ -14,8 +14,8 @@ create table if not exists stores
 create table if not exists products
 (
     product_id INT,
-    name       varchar(10),
-    article    varchar(50),
+    name       varchar(50),
+    article    varchar(12),
     type_id    INT,
     shop_id    INT,
     PRIMARY KEY (product_id),
