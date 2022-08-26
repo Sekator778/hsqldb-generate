@@ -1,5 +1,6 @@
 package org.example.store;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.example.model.Product;
 import org.example.util.SqlSchemeReader;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +19,8 @@ import java.util.List;
  */
 public class ProductStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductStore.class);
-    private final String PACK = "db/script";
-//    private String PACK = "db/postgres";
+    //    private final String PACK = "db/script";
+    private String PACK = "db/postgres";
     /**
      * connection one for more jobs
      */
@@ -94,7 +96,7 @@ public class ProductStore {
                 "              join type T on P.type_id = T.type_id\n" +
                 "where T.name = " +
                 "'" +
-                type + "'" +
+                type + "' " +
                 "group by S.id\n" +
                 "LIMIT 1;";
         try (var statement = connection.prepareStatement(QUERY)) {
@@ -110,14 +112,28 @@ public class ProductStore {
         return result;
     }
 
-    public void distributionProducts(Connection connection) {
-        try (var statement = connection.createStatement()) {
-            var sql = Files.readString(Path.of(PACK, "insert-stores_products.sql"));
-            statement.execute(sql);
-            LOGGER.info("--- insert into table stores_products ---");
-        } catch (Exception e) {
+    public void distributionProducts(Connection connection, int sizeListProducts, int sizeBatch) {
+        int countShops = 3 + 1;
+        int i = 0;
+        LOGGER.info("--- insert into table stores_products ---");
+        var sql = "INSERT INTO stores_products(store_id, product_id) VALUES (?, ?)";
+        try (var statement = connection.prepareStatement(sql)) {
+            while (sizeListProducts != 0) {
+                statement.setInt(1, RandomUtils.nextInt(1, countShops));
+                statement.setInt(2, sizeListProducts--);
+                statement.addBatch();
+                if (i == sizeBatch) {
+                    statement.executeBatch();
+                    statement.clearBatch();
+                    i = 0;
+                }
+                i++;
+            }
+            statement.executeBatch();
+            LOGGER.info("Operation Batch finished");
+        } catch (SQLException e) {
             LOGGER.error("Operation distributionProducts fail: {}", e.getMessage());
-            throw new IllegalStateException();
         }
     }
 }
+

@@ -110,8 +110,8 @@ public class RandomProductGenerate implements ProductGenerator {
                 Product product = new Product(index_product++,
                         name,
                         article,
-                        (random.nextInt(3)+1),
-                        (random.nextInt(3)+1));
+                        (random.nextInt(3) + 1),
+                        (random.nextInt(3) + 1));
                 products[i++] = product;
                 if (i == batchSize) {
                     LOGGER.info("start validate Copy On Write Use");

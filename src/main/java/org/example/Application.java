@@ -38,10 +38,13 @@ public class Application {
                     LOGGER.info("RandomProductGenerate created");
                     generate.generateForThread(number_of_inserts, batch_size, properties);
                     LOGGER.info("RandomProductGenerate.generateForThread finished");
-                    store.distributionProducts(connection);
                     List<Product> all = store.findAll();
-                    LOGGER.info("Now dataBase include {} records", all.size());
-                    String type = "Food";
+                    int sizeListProducts = all.size();
+                    store.distributionProducts(connection,
+                                                sizeListProducts,
+                                                batch_size);
+                    LOGGER.info("Now dataBase include {} records", sizeListProducts);
+                    String type = properties.getProperty("type");
                     String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent(type);
                     LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
                 } else {

@@ -13,8 +13,8 @@ import java.util.Properties;
 
 public class ReaderProperty {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReaderProperty.class);
-    private static final String PROPERTIES_FILE_NAME = "application-maria.properties";
-//    private static final String PROPERTIES_FILE_NAME = "application-postgres.properties";
+//    private static final String PROPERTIES_FILE_NAME = "application-maria.properties";
+    private static final String PROPERTIES_FILE_NAME = "application-postgres.properties";
 //    private static final String PROPERTIES_FILE_NAME = "application-hsqldb.properties";
 
     public static Properties loadProperties() {
