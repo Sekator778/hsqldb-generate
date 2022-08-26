@@ -33,16 +33,20 @@ public class Application {
             if (connection != null) {
                 LOGGER.info("Connection created successfully");
                 store = new ProductStore(connection);
-                RandomProductGenerate generate = new RandomProductGenerate();
-                LOGGER.info("RandomProductGenerate created");
-                generate. generateForThread(number_of_inserts, batch_size, properties);
-                LOGGER.info("RandomProductGenerate.generateForThread finished");
-                store.distributionProducts(connection);
-                List<Product> all = store.findAll();
-                LOGGER.info("Now dataBase include {} records", all.size());
-                String type = "Food";
-                String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent(type);
-                LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
+                if(store.initScheme()) {
+                    RandomProductGenerate generate = new RandomProductGenerate();
+                    LOGGER.info("RandomProductGenerate created");
+                    generate.generateForThread(number_of_inserts, batch_size, properties);
+                    LOGGER.info("RandomProductGenerate.generateForThread finished");
+                    store.distributionProducts(connection);
+                    List<Product> all = store.findAll();
+                    LOGGER.info("Now dataBase include {} records", all.size());
+                    String type = "Food";
+                    String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent(type);
+                    LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
+                } else {
+                    LOGGER.info("Problem with creating tables");
+                }
             } else {
                 LOGGER.info("Problem with creating connection");
             }

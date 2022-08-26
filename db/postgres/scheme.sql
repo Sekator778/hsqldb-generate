@@ -1,16 +1,18 @@
-drop table if exists stores_products cascade;
-drop table if exists products cascade;
-drop table if exists stores cascade;
-drop table if exists type cascade;
-create table type
+DROP TABLE IF EXISTS stores CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS type CASCADE;
+DROP TABLE IF EXISTS stores_products CASCADE;
+create table if not exists type
 (
-    type_id INT auto_increment primary key,
-    name    varchar(30)
+    type_id INT GENERATED ALWAYS AS IDENTITY,
+    name    varchar(30),
+    PRIMARY KEY (type_id)
 );
 create table if not exists stores
 (
-    id      INT auto_increment primary key,
+    id      INT GENERATED ALWAYS AS IDENTITY,
     address varchar(50),
+    PRIMARY KEY (id),
     UNIQUE (address)
 );
 create table if not exists products

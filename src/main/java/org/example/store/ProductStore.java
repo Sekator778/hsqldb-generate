@@ -1,6 +1,7 @@
 package org.example.store;
 
 import org.example.model.Product;
+import org.example.util.SqlSchemeReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProductStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductStore.class);
     private final String PACK = "db/script";
+//    private String PACK = "db/postgres";
     /**
      * connection one for more jobs
      */
@@ -24,41 +26,31 @@ public class ProductStore {
 
     public ProductStore(Connection connection) {
         ProductStore.connection = connection;
-        initScheme();
-        fillTypeAndShop();
     }
 
     /**
      * drop and crate tables
      */
-    private void initScheme() {
-        LOGGER.info("--- Create tables ---");
-        try (var statement = connection.createStatement()) {
-            var sql = Files.readString(Path.of(PACK, "dropAll.sql"));
-            statement.execute(sql);
-            LOGGER.info("--- drop all if exists table ---");
-            sql = Files.readString(Path.of(PACK, "scheme.sql"));
-            statement.execute(sql);
-            LOGGER.info("--- created tables done ---");
-        } catch (Exception e) {
-            LOGGER.error("Operation fail: {}", e.getMessage());
-            throw new IllegalStateException();
+    public boolean initScheme() {
+        boolean result;
+        if (PACK.equals("db/postgres")) {
+            LOGGER.info("--- Create tables, also feel tables type and stores ---");
+            try (var statement = connection.createStatement()) {
+                var sql = Files.readString(Path.of(PACK, "scheme.sql"));
+                statement.execute(sql);
+                LOGGER.info("--- created tables done ---");
+                result = true;
+                LOGGER.info("Postgres config use !");
+            } catch (Exception e) {
+                LOGGER.error("Operation initScheme fail: {}", e.getMessage());
+                throw new IllegalStateException();
+            }
+        } else {
+            SqlSchemeReader reader = new SqlSchemeReader(connection);
+            result = reader.readSqlFileAndRunSqlCommand();
+            LOGGER.info("MariaDB config use !");
         }
-    }
-
-    /**
-     * insert into tables type and shop
-     */
-    private void fillTypeAndShop() {
-        LOGGER.info("--- fill table type ---");
-        try (var statement = connection.createStatement()) {
-            var sql = Files.readString(Path.of(PACK, "insert.sql"));
-            statement.execute(sql);
-            LOGGER.info("--- insert into table type and stores ---");
-        } catch (Exception e) {
-            LOGGER.error("Operation fail: {}", e.getMessage());
-            throw new IllegalStateException();
-        }
+        return result;
     }
 
     /**
