@@ -16,12 +16,18 @@ import java.util.Properties;
 public class Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         long timeStart = System.currentTimeMillis();
-        ProductStore store = null;
+        ProductStore store;
         Properties properties = ReaderProperty.loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
         int batch_size = Integer.parseInt(properties.getProperty("batch"));
+        // register JDBC driver, optional, since java 1.6
+       try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("driver register fail {}", e.getMessage());
+        }
         try (Connection connection = DriverManager.getConnection(properties.getProperty("url"),
                 properties.getProperty("username"),
                 properties.getProperty("password"))) {
@@ -30,7 +36,7 @@ public class Application {
                 store = new ProductStore(connection);
                 RandomProductGenerate generate = new RandomProductGenerate();
                 LOGGER.info("RandomProductGenerate created");
-                generate.generateForThread(number_of_inserts, batch_size, properties);
+                generate. generateForThread(number_of_inserts, batch_size, properties);
                 LOGGER.info("RandomProductGenerate.generateForThread finished");
                 store.distributionProducts(connection);
                 List<Product> all = store.findAll();
