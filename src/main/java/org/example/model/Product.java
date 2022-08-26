@@ -19,6 +19,13 @@ public class Product {
         this.shop_id = shop_id;
     }
 
+    public Product(int id, String name, String article, int type) {
+        this.id = id;
+        this.name = name;
+        this.article = article;
+        this.type = type;
+    }
+
     public int getId() {
         return id;
     }

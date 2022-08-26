@@ -124,7 +124,7 @@ public class RandomProductGenerate implements ProductGenerator {
                         LOGGER.error("do something immediately !!!!! ");
                     }
                     LOGGER.info("arr for batch done make insert");
-                    new StoreWorker(products).exex(properties);
+                    new StoreWorker(products).insertWithBatch(properties);
                     products = new Product[batchSize];
                     i = 0;
                 }

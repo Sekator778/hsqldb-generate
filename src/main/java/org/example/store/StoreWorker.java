@@ -12,14 +12,16 @@ import java.util.Properties;
 public class StoreWorker {
     private final Product[] products;
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreWorker.class);
+    private static  int countBatch = 0;
 
     public StoreWorker(Product[] products) {
         this.products = products;
     }
 
-    public void exex(Properties properties) {
+    public void insertWithBatch(Properties properties) {
+        countBatch++;
         LOGGER.info("Operation Batch started");
-        var sql = "INSERT INTO products(product_id, name, article, type_id, shop_id) VALUES (?, ?, ?, ?, ?)";
+        var sql = "INSERT INTO products(product_id, name, article, type_id) VALUES (?, ?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(properties.getProperty("url"),
                 properties.getProperty("username"),
                 properties.getProperty("password"));
@@ -29,15 +31,16 @@ public class StoreWorker {
                 statement.setString(2, product.getName());
                 statement.setString(3, product.getArticle());
                 statement.setInt(4, product.getType());
-                statement.setInt(5, product.getShop_id());
                 statement.addBatch();
             }
             statement.executeBatch();
             statement.clearBatch();
             LOGGER.info("Operation Batch finished");
+            LOGGER.info("product last was insert with size batch: {} with the {} time ",
+                    products[Integer.parseInt(properties.getProperty("batch")) - 1],
+                    countBatch);
         } catch (SQLException e) {
             LOGGER.error("Operation Batch Fail: {}", e.getMessage());
         }
-        LOGGER.info("product last was insert {}", products[Integer.parseInt(properties.getProperty("batch")) - 1]);
     }
 }

@@ -22,7 +22,6 @@ public class Application {
         Properties properties = ReaderProperty.loadProperties();
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
         int batch_size = Integer.parseInt(properties.getProperty("batch"));
-        // register JDBC driver, optional, since java 1.6
        try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {

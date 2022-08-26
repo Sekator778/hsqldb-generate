@@ -1,7 +1,6 @@
 package org.example.store;
 
 import org.example.model.Product;
-import org.example.service.generator.RandomProductGenerate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +77,7 @@ public class ProductStore {
                         selection.getInt("product_id"),
                         selection.getString("name"),
                         selection.getString("article"),
-                        selection.getInt("type_id"),
-                        selection.getInt("shop_id")
+                        selection.getInt("type_id")
                 ));
             }
         } catch (Exception e) {
