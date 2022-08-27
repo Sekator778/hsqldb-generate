@@ -9,15 +9,6 @@ public class Product {
     private String article;
     @Range(min = 1, max = 3, message = "Size of state must be from 1 to 3")
     private int type;
-    private int shop_id;
-
-    public Product(int id, String name, String article, int type, int shop_id) {
-        this.id = id;
-        this.name = name;
-        this.article = article;
-        this.type = type;
-        this.shop_id = shop_id;
-    }
 
     public Product(int id, String name, String article, int type) {
         this.id = id;
@@ -58,13 +49,6 @@ public class Product {
         this.article = article;
     }
 
-    public int getShop_id() {
-        return shop_id;
-    }
-
-    public void setShop_id(int shop_id) {
-        this.shop_id = shop_id;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -88,7 +72,6 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", article='" + article + '\'' +
                 ", type=" + type +
-                ", shop_id=" + shop_id +
                 '}';
     }
 }

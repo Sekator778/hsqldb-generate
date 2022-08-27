@@ -1,18 +1,16 @@
-DROP TABLE IF EXISTS stores CASCADE;
-DROP TABLE IF EXISTS products CASCADE;
-DROP TABLE IF EXISTS type CASCADE;
-DROP TABLE IF EXISTS stores_products CASCADE;
-create table if not exists type
+drop table if exists stores_products cascade;
+drop table if exists products cascade;
+drop table if exists stores cascade;
+drop table if exists type cascade;
+create table type
 (
-    type_id INT GENERATED ALWAYS AS IDENTITY,
-    name    varchar(30),
-    PRIMARY KEY (type_id)
+    type_id INT auto_increment primary key,
+    name    varchar(30)
 );
 create table if not exists stores
 (
-    id      INT GENERATED ALWAYS AS IDENTITY,
+    id      INT auto_increment primary key,
     address varchar(50),
-    PRIMARY KEY (id),
     UNIQUE (address)
 );
 create table if not exists products
@@ -22,8 +20,7 @@ create table if not exists products
     article    varchar(12),
     type_id    INT,
     PRIMARY KEY (product_id),
-    FOREIGN KEY (type_id) REFERENCES type (type_id),
-    UNIQUE (name)
+    FOREIGN KEY (type_id) REFERENCES type (type_id)
 );
 create table if not exists stores_products
 (

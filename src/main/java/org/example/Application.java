@@ -23,7 +23,7 @@ public class Application {
         int number_of_inserts = Integer.parseInt(properties.getProperty("max"));
         int batch_size = Integer.parseInt(properties.getProperty("batch"));
        try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             LOGGER.error("driver register fail {}", e.getMessage());
         }
@@ -36,7 +36,7 @@ public class Application {
                 if(store.initScheme()) {
                     RandomProductGenerate generate = new RandomProductGenerate();
                     LOGGER.info("RandomProductGenerate created");
-                    generate.generateForThread(number_of_inserts, batch_size, properties);
+                    generate.generate(number_of_inserts, batch_size, properties);
                     LOGGER.info("RandomProductGenerate.generateForThread finished");
                     List<Product> all = store.findAll();
                     int sizeListProducts = all.size();
@@ -44,7 +44,8 @@ public class Application {
                                                 sizeListProducts,
                                                 batch_size);
                     LOGGER.info("Now dataBase include {} records", sizeListProducts);
-                    String type = properties.getProperty("type");
+//                    String type = properties.getProperty("type");
+                    String type = System.getProperty("type");
                     String addressWhereMoreTypePresent = store.findAddressWhereMoreTypePresent(type);
                     LOGGER.info("Result address: {}", addressWhereMoreTypePresent);
                 } else {

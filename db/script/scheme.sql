@@ -20,8 +20,7 @@ create table if not exists products
     article    varchar(12),
     type_id    INT,
     PRIMARY KEY (product_id),
-    FOREIGN KEY (type_id) REFERENCES type (type_id),
-    UNIQUE (name)
+    FOREIGN KEY (type_id) REFERENCES type (type_id)
 );
 create table if not exists stores_products
 (

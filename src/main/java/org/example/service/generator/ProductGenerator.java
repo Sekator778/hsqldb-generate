@@ -1,9 +1,7 @@
 package org.example.service.generator;
 
-import org.example.model.Product;
-
-import java.util.List;
+import java.util.Properties;
 
 public interface ProductGenerator {
-    Product[] generate(int count);
+    boolean generate(int count, int batchSize, Properties properties);
 }

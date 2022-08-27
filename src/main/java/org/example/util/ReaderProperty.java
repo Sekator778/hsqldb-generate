@@ -1,5 +1,6 @@
 package org.example.util;
 
+import org.example.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,17 +14,16 @@ import java.util.Properties;
 
 public class ReaderProperty {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReaderProperty.class);
-//    private static final String PROPERTIES_FILE_NAME = "application-maria.properties";
-    private static final String PROPERTIES_FILE_NAME = "application-postgres.properties";
-//    private static final String PROPERTIES_FILE_NAME = "application-hsqldb.properties";
+    private static final String PROPERTIES_FILE_NAME = "application-maria.properties";
 
     public static Properties loadProperties() {
-        LOGGER.info("load application");
+        LOGGER.info("start method main");
         System.setProperty("file.encoding", "UTF-8");
-        var properties = new Properties();
-        File file = new File(PROPERTIES_FILE_NAME);
+        Properties properties = new Properties();
+        File file = new File("./app.properties");
         if (file.exists()) {
-            try (InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+            try {
+                InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
                 properties.load(in);
                 LOGGER.info("properties loading from user file");
             } catch (IOException e) {
@@ -33,7 +33,7 @@ public class ReaderProperty {
             try {
                 properties.load(new InputStreamReader(
                         Objects.requireNonNull(
-                                ReaderProperty.class.getClassLoader()
+                                Application.class.getClassLoader()
                                         .getResourceAsStream(PROPERTIES_FILE_NAME)),
                         StandardCharsets.UTF_8));
                 LOGGER.info("default properties loading");
